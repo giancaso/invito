@@ -17,6 +17,10 @@
             position: fixed;
             pointer-events: none;
         }
+        #btnRifiuta {
+            position: relative;
+            transition: all 0.3s ease-out;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-pink-100 to-purple-100 min-h-screen flex items-center justify-center p-4">
@@ -45,7 +49,7 @@
                 <button onclick="accetta()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition transform hover:scale-105">
                     💚 Accetto
                 </button>
-                <button onclick="rifiuta()" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded-lg transition transform hover:scale-105">
+                <button id="btnRifiuta" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded-lg">
                     ❌ Ripenso
                 </button>
             </div>
@@ -64,6 +68,14 @@
     </div>
 
     <script>
+        const btnRifiuta = document.getElementById('btnRifiuta');
+
+        btnRifiuta.addEventListener('mouseover', function(e) {
+            const randomX = (Math.random() - 0.5) * 200;
+            const randomY = (Math.random() - 0.5) * 200;
+            btnRifiuta.style.transform = `translate(${randomX}px, ${randomY}px)`;
+        });
+
         function accetta() {
             document.getElementById('content').classList.add('hidden');
             document.getElementById('risposta').classList.remove('hidden');
@@ -84,6 +96,7 @@
         function ricomincia() {
             document.getElementById('content').classList.remove('hidden');
             document.getElementById('risposta').classList.add('hidden');
+            btnRifiuta.style.transform = 'translate(0, 0)';
         }
 
         function creaConfetti() {
