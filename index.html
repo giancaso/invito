@@ -35,7 +35,7 @@
             
             <div class="bg-pink-50 rounded-lg p-6 mb-8 border-2 border-pink-200">
                 <p class="text-gray-700 text-base leading-relaxed">
-                    Una sera d’estate, tra musica, sorrisi e compagnia. Un piccolo momento fuori dal tempo, dedicato solo a te.
+                    Una sera d'estate, tra musica, sorrisi e compagnia. Un piccolo momento fuori dal tempo, dedicato solo a te.
                 </p>
             </div>
 
@@ -50,7 +50,7 @@
                     💚 Accetto
                 </button>
                 <button id="btnRifiuta" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-3 px-8 rounded-lg">
-                    ❌ Ripenso
+                    ❌ Rifiuto
                 </button>
             </div>
         </div>
@@ -61,14 +61,48 @@
         <div class="bg-white rounded-lg shadow-2xl p-8 text-center max-w-md">
             <h2 id="messaggio" class="text-2xl font-bold mb-4"></h2>
             <p id="dettagli" class="text-gray-600 mb-6"></p>
-            <button onclick="ricomincia()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-lg">
-                Indietro
+            <button onclick="goToFeedback()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-lg">
+                Continua
             </button>
+        </div>
+    </div>
+
+    <!-- Form Feedback -->
+    <div id="formFeedback" class="hidden fixed inset-0 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-2xl p-8 text-center max-w-md">
+            <h2 class="text-2xl font-bold mb-4 text-pink-600">⭐ Mi piacerebbe un tuo feedback</h2>
+            <p class="text-gray-600 mb-6 text-sm">Sono curioso di sapere se ti è piaciuto questo invito</p>
+            
+            <form id="formFeedbackForm" method="POST" action="https://formspree.io/f/YOUR_FEEDBACK_FORM_ID" class="space-y-4">
+                <div class="mb-4">
+                    <label class="block text-gray-700 mb-2 text-sm">Quanto ti è piaciuto?</label>
+                    <div class="flex gap-2 justify-center">
+                        <button type="button" onclick="setRating(1)" class="text-3xl hover:scale-125 transition" data-rating="1">😞</button>
+                        <button type="button" onclick="setRating(2)" class="text-3xl hover:scale-125 transition" data-rating="2">😐</button>
+                        <button type="button" onclick="setRating(3)" class="text-3xl hover:scale-125 transition" data-rating="3">🙂</button>
+                        <button type="button" onclick="setRating(4)" class="text-3xl hover:scale-125 transition" data-rating="4">😊</button>
+                        <button type="button" onclick="setRating(5)" class="text-3xl hover:scale-125 transition" data-rating="5">😍</button>
+                    </div>
+                    <input type="hidden" id="rating" name="valutazione" value="">
+                </div>
+
+                <textarea name="feedback" placeholder="Il tuo feedback (opzionale)..." class="w-full h-20 p-3 border-2 border-pink-200 rounded-lg focus:outline-none focus:border-pink-500 resize-none"></textarea>
+                
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-lg transition">
+                        ✉️ Invia
+                    </button>
+                    <button type="button" onclick="saltaFeedback()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition">
+                        ⏭️ Salta
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         const btnRifiuta = document.getElementById('btnRifiuta');
+        let selectedRating = 0;
 
         btnRifiuta.addEventListener('mouseover', function(e) {
             const randomX = (Math.random() - 0.5) * 200;
@@ -80,9 +114,29 @@
             document.getElementById('content').classList.add('hidden');
             document.getElementById('risposta').classList.remove('hidden');
             document.getElementById('messaggio').textContent = '💖 Perfetto!';
-            document.getElementById('dettagli').textContent = 'Ti aspetto il 19 giugno. Sarà indimenticabile.';
+            document.getElementById('dettagli').textContent = 'Ti aspetto il 19 giugno. Sarà indimenticabile. Ho pronto anche un regalo speciale per te (il mio pisello).';
             creaConfetti();
             salvaRisposta('accettato');
+        }
+
+        function goToFeedback() {
+            document.getElementById('risposta').classList.add('hidden');
+            document.getElementById('formFeedback').classList.remove('hidden');
+        }
+
+        function setRating(rating) {
+            selectedRating = rating;
+            document.getElementById('rating').value = rating;
+        }
+
+        function saltaFeedback() {
+            finito();
+        }
+
+        function finito() {
+            document.getElementById('formFeedback').classList.add('hidden');
+            alert('Grazie! 💖');
+            ricomincia();
         }
 
         function rifiuta() {
@@ -96,7 +150,11 @@
         function ricomincia() {
             document.getElementById('content').classList.remove('hidden');
             document.getElementById('risposta').classList.add('hidden');
+            document.getElementById('formFeedback').classList.add('hidden');
             btnRifiuta.style.transform = 'translate(0, 0)';
+            document.getElementById('formFeedbackForm').reset();
+            selectedRating = 0;
+            document.getElementById('rating').value = '';
         }
 
         function creaConfetti() {
@@ -116,6 +174,14 @@
             localStorage.setItem('rispostaChiara', risposta);
             console.log('Risposta salvata:', risposta);
         }
+
+        document.getElementById('formFeedbackForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            this.submit();
+            setTimeout(() => {
+                finito();
+            }, 1000);
+        });
 
         // Aggiungi animazione CSS per i confetti
         const style = document.createElement('style');
